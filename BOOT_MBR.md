@@ -41,7 +41,30 @@ Portanto, o trabalho do segmento de código de bootstrap no MBR é bastante simp
 ### Assinatura de inicialização
 Em PCs compatíveis com IBM (basicamente, tudo) os dois bytes finais do MBR de 512 bytes são chamados de  assinatura de inicialização e são usados ​​pelo BIOS para determinar se a unidade de inicialização selecionada é realmente inicializável ou não. Em um disco que contém um código de bootstrap válido, os dois últimos bytes do MBR devem ser sempre 0x55 0xAA. 5 Se os dois últimos bytes do MBR não forem iguais a 0x55 e 0xAA respectivamente, o BIOS irá assumir que o disco não é inicializável e não é uma opção de inicialização válida - neste caso, ele voltará para o próximo dispositivo na lista de ordem de inicialização (conforme configurado na configuração do BIOS). Por exemplo, se o primeiro dispositivo de inicialização no BIOS for definido como o stick USB e o segundo for o disco rígido local, se um stick USB sem a assinatura de inicialização correta estiver conectado, o BIOS irá ignorá-lo e tentar carregar do disco local. Se nenhum disco na lista de dispositivos de inicialização tiver a assinatura de inicialização 0x55 0xAA correta, o BIOS exibirá um erro como o infame “Nenhum dispositivo de inicialização disponível” ou “Reinicialize e selecione o dispositivo de inicialização adequado”.
 
+### O setor de inicialização da partição
+Conforme abordado acima, o código de bootstrap no MBR geralmente carregará uma sequência de bytes a partir do início da partição ativa. O layout exato de uma partição depende de qual sistema de arquivos a partição foi criada ou formatada, mas geralmente se parece com isto:
+![](fotos/3-Partition-on-Disk.png)
+Novamente, dependendo do sistema operacional e do sistema de arquivos, o layout exato da partição certamente será diferente. Mas isso representa uma boa aproximação do que você normalmente verá:
 
+*. Uma única instrução JMP (salto), que é a montagem 6 equivalente a um  comando goto.
+*. O cabeçalho do sistema de arquivos, que conterá informações específicas e importantes para o próprio sistema de arquivos.
+*. Outro segmento de código de bootstrap, contendo o próximo estágio do processo de bootloader.
+*. Um marcador de fim de setor, muito semelhante à assinatura de inicialização 0x55 0xAA que vimos anteriormente no MBR.
+
+Isso tudo é geralmente compactado no primeiro setor da partição, que normalmente tem apenas 512 bytes de comprimento e, novamente, não cabe muitos dados ou instruções. Em sistemas de arquivos modernos para sistemas operacionais mais recentes, o código de bootstrap pode aproveitar a funcionalidade aprimorada do BIOS para ler e executar mais do que apenas 512 bytes, mas em todos os casos, as etapas básicas permanecem as mesmas:
+
+*. O MBR carrega os primeiros 512 bytes da partição ativa na memória e instrui a CPU a executá-los.
+*. Os primeiros (três) bytes do setor de inicialização da partição contêm uma única instrução JMP, dizendo à CPU para pular xx bytes à frente e executar o próximo estágio do carregador de inicialização a partir daí.
+*. A CPU segue a instrução JMP e busca o início do código de bootstrap contido no setor de inicialização da partição e começa a executar.
+
+O código de bootstrap na partição não é o fim do caminho, é apenas mais uma etapa ao longo do caminho. Por causa de quão pouco espaço é alocado para o código de bootstrap no  setor de inicialização da partição, o código que ele contém normalmente termina com outro comando JMP instruindo a CPU a pular para o  próximo setor na partição, que muitas vezes é reservado para o restante da partição código. Dependendo do sistema de arquivos, pode ter vários setores de comprimento, ou o comprimento necessário para caber neste estágio do bootloader.
+
+### O bootloader de segundo estágio
+O segundo estágio do bootloader, armazenado no setor de inicialização da partição na seção de bootstrap e, opcionalmente, continuando além dele, executa a próxima etapa do processo de bootloader: ele procura um arquivo armazenado na própria partição (como um arquivo normal) , e diz à CPU para executar seu conteúdo para iniciar a parte final do processo de inicialização.
+
+Ao contrário dos segmentos de bootstrap anteriores do MBR e do setor de boot da partição, a próxima etapa do processo de boot não é armazenada em um deslocamento dedicado dentro da partição (ou seja, o código de bootstrap não pode simplesmente dizer à CPU para JMP para a localização 0xABC e executar o arquivo de inicialização a partir daí) - é um arquivo normal armazenado entre outros arquivos normais no sistema de arquivos do disco.
+
+Este código de bootstrap significativamente mais complicado deve realmente ler o índice do sistema de arquivos na partição, 7 O carregador de boot de segundo estágio de versões mais antigas de sistemas de arquivos muitas vezes impôs restrições complicadas aos arquivos do carregador de boot que eles precisavam carregar, como exigindo que eles apareçam nos primeiros kilobytes da partição ou sendo incapaz de carregar arquivos alocados de forma não contígua na partição. Este arquivo é a última peça do quebra-cabeça do bootloader e geralmente não há restrições quanto ao seu tamanho ou conteúdo, o que significa que pode ser tão grande e tão complicado quanto necessário para carregar o kernel do sistema operacional do disco e passar adiante controle do PC para o sistema operacional.
 
 
 
