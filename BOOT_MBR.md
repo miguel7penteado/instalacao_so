@@ -100,7 +100,23 @@ GRUB 2 é um gerenciador de inicialização modular poderoso, mais parecido com 
 
 O arquivo do carregador de inicialização real para GRUB 2 não é um arquivo chamado GRUB2, mas um arquivo geralmente chamado core.img . Ao contrário do Legacy GRUB, o arquivo de configuração do GRUB 2 é mais um script e menos um arquivo de configuração tradicional. O arquivo grub.cfg, normalmente localizado em /boot/grub/grub.cfg na partição de inicialização, é semelhante a scripts de shell e oferece suporte a conceitos avançados como funções. A funcionalidade principal do GRUB 2 é complementada com módulos, normalmente encontrados em um subdiretório do diretório /boot/grub/ .
 
+## O processo de inicialização
+Como mencionado anteriormente, o estágio do processo de inicialização é um pouco mais complicado do que as etapas anteriores, principalmente devido à complexidade adicional de leitura do sistema de arquivos. O bootloader também deve obter informações sobre o hardware da máquina subjacente (por meio do BIOS ou por conta própria) para carregar corretamente o sistema operacional desejado da partição correta e fornecer quaisquer arquivos ou dados adicionais que possam ser necessários. Ele também deve ler seu próprio arquivo de configuração a partir de um arquivo regular armazenado no sistema de arquivos da partição de inicialização, portanto, ele precisa, no mínimo, ter suporte total de leitura para qualquer sistema de arquivos em que resida.
+![](fotos/6-Bootloader-Flowchart.png)
 
+#### Iniciar acesso ao sistema de arquivos
+Antes que qualquer coisa possa acontecer, quando o bootloader é executado pela primeira vez, ele deve carregar e executar os “drivers” primitivos do sistema de arquivos que lhe dão a capacidade de ler, no mínimo, o sistema de arquivos em que está localizado. Como ele não consegue ler o sistema de arquivos antes disso, por necessidade o código que fornece essa funcionalidade deve ser compilado no próprio arquivo do carregador de inicialização principal.
+
+#### Carregar e ler arquivo (s) de configuração
+Com suporte para o sistema de arquivos carregado, o carregador de inicialização agora pode ler a lista de sistemas operacionais do disco e, se houver vários sistemas operacionais especificados, prepará-la para exibição.
+Carregar e executar módulos de suporte
+Para bootloaders que não são totalmente autocontidos (como NTLDR e GRUB 2), o bootloader agora carrega quaisquer módulos de suporte ou programas auxiliares (como NTDETECT.COM) do disco. A lista de módulos a serem carregados pode ser especificada no arquivo de configuração que acabou de ser lido ou codificado / compilado no próprio bootloader. Normalmente, cada módulo será executado conforme é localizado e carregado do disco.
+
+#### Exibir o menu de inicialização
+Neste ponto, com todas as configurações relevantes em mãos, o carregador de inicialização pode exibir o que é comumente conhecido como menu de inicialização na tela. Se vários sistemas operacionais estiverem instalados, é por meio do menu de inicialização que o usuário do computador pode navegar por uma lista de sistemas operacionais e escolher qual carregar. A partir daqui, alguns gerenciadores de inicialização também possibilitam especificar opções de tempo de execução, como carregar ou não o sistema operacional selecionado no modo de segurança.
+
+#### Carregar o kernel do sistema operacional
+Uma vez que a seleção do usuário foi registrada, o bootloader segue para o último e último estágio do processo de boot. Dependendo do sistema operacional e do tipo de kernel, o bootloader carregará a imagem do kernel do caminho especificado no arquivo de configuração (com a ajuda de quaisquer submódulos, se necessário) na memória. Em seguida, ele instrui a CPU a fazer o JMP para um determinado local dentro do kernel recém-carregado e começar a executar a partir daí.
 
 
 
