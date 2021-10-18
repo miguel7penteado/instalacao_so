@@ -24,18 +24,19 @@ Depois de configurar os dispositivos básicos de entrada e saída do seu PC, o B
 Anteriormente, mencionamos que uma parte importante do trabalho do BIOS é detectar e mapear os discos rígidos conectados. Esta lista agora é útil, pois a BIOS carregará um programa muito pequeno do primeiro disco rígido para a memória e dirá à CPU para executar seu conteúdo, transferindo o controle do computador para o que quer que esteja no disco rígido e encerrando sua atividade papel no carregamento de seu PC. Este disco rígido é conhecido como “dispositivo de inicialização”, “disco de inicialização” ou “unidade 0” e geralmente pode ser selecionado ou definido na configuração do BIOS.
 
 ### O dispositivo de inicialização
-Independentemente de o BIOS ter sido configurado para inicializar a partir de um disco rígido local ou de um stick USB removível, a sequência de transferência é a mesma. Uma vez que os procedimentos do BIOS POST e AddOn ROM foram concluídos, o BIOS carrega os primeiros 512 bytes do disco rígido do dispositivo de inicialização selecionado - esses 512 bytes são comumente conhecidos como MBR ou Master Boot Record.
+Independentemente de o BIOS ter sido configurado para inicializar a partir de um disco rígido local ou de um stick USB removível, a sequência de transferência é a mesma. Uma vez que os procedimentos do BIOS POST e AddOn ROM foram concluídos, o BIOS carrega os **primeiros 512 bytes do disco rígido** do **dispositivo de inicialização selecionado** - esses **512 bytes** são comumente conhecidos como **MBR** ou **Master Boot Record**.
 
-### O Master Boot Record (MBR)
-O MBR é o primeiro e mais importante componente do lado do software no procedimento de inicialização em máquinas baseadas em BIOS. Cada disco rígido possui um MBR e contém várias informações importantes.
+### O Master Boot Record (MBR - 512 bytes)
+O **M.B.R.** é o primeiro e mais importante componente do lado do software no procedimento de inicialização em máquinas baseadas em BIOS. Cada disco rígido possui um MBR e contém várias informações importantes.
 ![](2-Master-Boot-Record.png)
+
 ### A Tabela de Partição
 Em primeiro lugar, o MBR contém algo chamado tabela de partição, que é um índice de até quatro partições que existem no mesmo disco, um índice, se preferir. Sem ele (como em disquetes), o disco inteiro poderia conter apenas uma partição, o que significa que você não pode ter coisas como sistemas de arquivos diferentes na mesma unidade, o que por sua vez significaria que você nunca poderia instalar Linux e Windows no mesmo disco, por exemplo.
 
 ### Código Bootstrap
-Em segundo lugar, o MBR (512 bytes) também contém um código muito importante conhecido como *código de bootstrap*. 
+Em segundo lugar, o MBR (512 bytes) também contém um código muito importante conhecido como **código de bootstrap**. 
 
-> Dependendo do sistema operacional e da plataforma, o código de bootstrap pode realmente ter apenas 434 a 446 bytes, já que partes dessa região podem ser reservadas para outros fins, como a assinatura do disco e o carimbo de data / hora do disco. Na maioria dos sistemas operacionais modernos, 440 é o limite superior, pois os últimos 6 bytes são reservados para a assinatura do disco de 4 bytes no deslocamento 0x01B8 e um campo de 2 bytes indicando o estado de leitura e gravação da unidade no deslocamento 0x01BC (com 0x00 indicando leitura-gravação e 0x5A5A indicando uma unidade somente leitura).
+> Dependendo do sistema operacional e da plataforma, o código de bootstrap pode realmente ter apenas **434** a **446** bytes, já que partes dessa região podem ser reservadas para outros fins, como a assinatura do disco e o carimbo de data / hora do disco. Na maioria dos sistemas operacionais modernos, **440** é o limite superior, pois os **últimos 6 bytes são reservados para a assinatura do disco de 4 bytes** no deslocamento **0x01B8** e um campo de **2 bytes indicando o estado de leitura e gravação da unidade** no deslocamento **0x01BC** (com **0x00 indicando leitura-gravação** e **0x5A5A indicando uma unidade somente leitura**).
 
 Os **primeiros 440 bytes**  desses 512 bytes podem conter literalmente qualquer coisa - o BIOS irá carregá-lo e executar seu conteúdo como está, dando início ao procedimento de bootloader. 440 bytes é incrivelmente pequeno. Quão pequeno? Bem, para colocar as coisas em contexto, 440 bytes é apenas 0,3% da capacidade de um antigo disquete de 1,44 MiB - apenas o suficiente para caber em qualquer forma de código útil - e muito, muito pequeno para fazer algo tão complicado como chamar o kernel do sistema operacional do disco.
 
