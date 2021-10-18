@@ -118,6 +118,9 @@ Neste ponto, com todas as configurações relevantes em mãos, o carregador de i
 #### Carregar o kernel do sistema operacional
 Uma vez que a seleção do usuário foi registrada, o bootloader segue para o último e último estágio do processo de boot. Dependendo do sistema operacional e do tipo de kernel, o bootloader carregará a imagem do kernel do caminho especificado no arquivo de configuração (com a ajuda de quaisquer submódulos, se necessário) na memória. Em seguida, ele instrui a CPU a fazer o JMP para um determinado local dentro do kernel recém-carregado e começar a executar a partir daí.
 
+## Conclusão
+Assim termina a longa jornada que começa com o apertar de um botão e termina com o kernel de um sistema operacional carregado na memória e executado. O processo de bootloader é certamente muito mais nuançado e complicado do que a maioria imagina, e foi projetado e evoluído para funcionar de forma bastante padronizada em diferentes plataformas e em uma variedade de sistemas operacionais.
 
+Os componentes individuais do bootloader são, em geral, autossuficientes e autocontidos. Eles podem ser trocados individualmente sem afetar o todo, o que significa que você pode adicionar discos e inicializar de diferentes dispositivos sem se preocupar em perturbar configurações e sistemas operacionais existentes. Isso também significa que, em vez de ter um único bit de hardware / software para configurar, configurar, manter e depurar, você fica com uma cadeia intrincada e muitas vezes muito frágil, com vários pontos suscetíveis a quebras e falhas. Quando funcionando corretamente, o processo de inicialização é uma máquina bem lubrificada, mas quando ocorre um desastre, pode ser um processo muito difícil de entender e depurar.
 
 
