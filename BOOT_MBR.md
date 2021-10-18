@@ -33,7 +33,7 @@ O MBR é o primeiro e mais importante componente do lado do software no procedim
 Em primeiro lugar, o MBR contém algo chamado tabela de partição, que é um índice de até quatro partições que existem no mesmo disco, um índice, se preferir. Sem ele (como em disquetes), o disco inteiro poderia conter apenas uma partição, o que significa que você não pode ter coisas como sistemas de arquivos diferentes na mesma unidade, o que por sua vez significaria que você nunca poderia instalar Linux e Windows no mesmo disco, por exemplo.
 
 ### Código Bootstrap
-Em segundo lugar, o MBR também contém um código muito importante conhecido como *código de bootstrap*. 
+Em segundo lugar, o MBR (512 bytes) também contém um código muito importante conhecido como *código de bootstrap*. 
 
 > Dependendo do sistema operacional e da plataforma, o código de bootstrap pode realmente ter apenas 434 a 446 bytes, já que partes dessa região podem ser reservadas para outros fins, como a assinatura do disco e o carimbo de data / hora do disco. Na maioria dos sistemas operacionais modernos, 440 é o limite superior, pois os últimos 6 bytes são reservados para a assinatura do disco de 4 bytes no deslocamento 0x01B8 e um campo de 2 bytes indicando o estado de leitura e gravação da unidade no deslocamento 0x01BC (com 0x00 indicando leitura-gravação e 0x5A5A indicando uma unidade somente leitura).
 
