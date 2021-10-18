@@ -67,8 +67,38 @@ Ao contrário dos segmentos de bootstrap anteriores do MBR e do setor de boot da
 Este código de bootstrap significativamente mais complicado deve realmente ler o índice do sistema de arquivos na partição, 7 O carregador de boot de segundo estágio de versões mais antigas de sistemas de arquivos muitas vezes impôs restrições complicadas aos arquivos do carregador de boot que eles precisavam carregar, como exigindo que eles apareçam nos primeiros kilobytes da partição ou sendo incapaz de carregar arquivos alocados de forma não contígua na partição. Este arquivo é a última peça do quebra-cabeça do bootloader e geralmente não há restrições quanto ao seu tamanho ou conteúdo, o que significa que pode ser tão grande e tão complicado quanto necessário para carregar o kernel do sistema operacional do disco e passar adiante controle do PC para o sistema operacional.
 
 
+## O Bootloader
+Os arquivos do carregador de inicialização reais no disco formam as partes finais do processo de carregamento de inicialização. Quando as pessoas falam sobre carregadores de inicialização e arquivos de inicialização, geralmente estão se referindo a esta etapa final e crítica do processo de inicialização.
+![](4-Bootloader-Sequence.png)
+Uma vez que o controle do PC foi transferido do BIOS para o código de bootstrap no MBR e do MBR para o código de bootstrap no setor de inicialização da partição, e daí para os arquivos de inicialização executáveis na partição ativa, a lógica real envolvido na determinação de qual sistema operacional carregar, de onde carregá-lo, quais parâmetros / opções transmitir a ele e concluir quaisquer interações com o usuário que possam estar disponíveis, o processo real de inicialização do sistema operacional começa.
 
+### Arquivos de configuração de inicialização
+Embora os arquivos executáveis do carregador de inicialização possam teoricamente conter informações codificadas pertencentes aos sistemas operacionais a serem carregados do disco, isso não seria muito útil. Como tal, quase todos os bootloaders separam o bootloader executável real do arquivo de configuração ou banco de dados que contém informações sobre o (s) sistema (s) operacional (is) a carregar. Todos os principais bootloaders mencionados abaixo têm suporte para carregar vários sistemas operacionais, um processo conhecido como “dual-boot” ou “multi-boot”.
 
+### Carregadores de inicialização populares
+Conforme discutido anteriormente, existem muitos bootloaders diferentes por aí. Cada sistema operacional tem seu próprio bootloader, projetado especificamente para ler seu sistema de arquivos e localizar o kernel que precisa ser carregado para que o SO funcione. Aqui estão alguns dos bootloaders mais populares - e seus arquivos de configuração essenciais - para alguns dos sistemas operacionais comuns:
+![](fotos/5-NTLDR-BOOTMGR-GRUB.png)
+Cada um dos sistemas operacionais populares tem seu próprio bootloader padrão. Windows NT, 2000 e XP, bem como Windows Server 2000 e Windows Server 2003, usam o carregador de inicialização NTLDR. O Windows Vista introduziu o bootloader BOOTMGR, atualmente usado pelo Windows Vista, 7, 8 e 10, bem como pelo Windows Server 2008 e 2012. Embora vários bootloaders diferentes tenham existido para o Linux ao longo dos anos, os dois bootloaders predominantes foram Lilo e GRUB, mas agora a maioria das distribuições Linux se uniram em torno do poderoso carregador de inicialização GRUB2.
+
+#### NTLDR
+NTLDR é o antigo carregador de inicialização do Windows, usado pela primeira vez no Windows NT (daí o “NT” em “NTLDR”, abreviação de “NT Loader”) e atualmente usado no Windows NT, Windows 2000, Windows XP e Windows Server 2003.
+
+O NTLDR armazena sua configuração de inicialização em um arquivo simples baseado em texto denominado BOOT.INI, armazenado no diretório raiz da partição ativa (geralmente C: \ Boot.ini). Depois que o NTLDR é carregado e executado pelo bootloader de segundo estágio, ele executa um programa auxiliar denominado NTDETECT.COM que identifica o hardware e gera um índice de informações sobre o sistema. Mais informações sobre NTLDR, BOOT.INI e NTDETECT.COM podem ser encontradas nos artigos vinculados em nossa base de conhecimento.
+
+#### BOOTMGR
+BOOTMGR é a versão mais recente do bootloader usado pelo Microsoft Windows e foi introduzido pela primeira vez nas versões beta do Windows Vista (então Windows Codename Longhorn). Atualmente é usado no Windows Vista, Windows 7, Windows 8, Windows 8.1 e Windows 10, bem como no Windows Server 2008 e no Windows Server 2012.
+
+O BOOTMGR marcou um afastamento significativo do NTLDR. É um bootloader independente com muito mais opções, especialmente projetado para ser compatível com as funcionalidades mais recentes em sistemas operacionais modernos e projetado com EFI e GPT em mente (embora apenas certas versões do BOOTMGR suportem o carregamento do Windows a partir de um disco GPT ou em um UEFI / Configuração EFI). Ao contrário do NTLDR, o BOOTMGR armazena sua configuração em um arquivo chamado BCD - abreviação de Boot Configuration Database. Ao contrário do BOOT.INI, o arquivo BCD é um banco de dados binário que não pode ser aberto e editado manualmente. 8 Em vez disso, ferramentas de linha de comando especificamente projetadas, como bcdedit.exe, e utilitários GUI mais fáceis de usar, como EasyBCD,  devem ser usados ​​para ler e modificar a lista de sistemas operacionais.
+
+#### GRUB
+GRUB foi o gerenciador de inicialização predominantemente usado para Linux na década de 1990 e início de 2000, projetado para carregar não apenas o Linux, mas qualquer sistema operacional que implementasse a especificação de inicialização múltipla aberta para seu kernel. O arquivo de configuração do GRUB contendo uma lista de sistemas operacionais formatada com espaço em branco era freqüentemente chamado de menu.lst ou grub.lst e encontrado no diretório / boot / ou / boot / grub /. Como esses valores podiam ser alterados pela recompilação do GRUB com diferentes opções, diferentes distribuições do Linux tinham esse arquivo localizado com nomes diferentes em diretórios diferentes.
+
+#### GRUB 2
+Embora o GRUB finalmente tenha vencido Lilo e eLilo, ele foi substituído pelo GRUB 2 por volta de 2002, e o antigo GRUB foi oficialmente renomeado como "GRUB herdado". Surpreendentemente, GRUB 2 agora é oficialmente chamado de GRUB, enquanto o antigo GRUB foi oficialmente relegado ao nome de “Legacy GRUB”, mas felizmente você encontrará a maioria dos recursos online referindo-se à encarnação mais recente do carregador de boot GRUB como GRUB 2.
+
+GRUB 2 é um gerenciador de inicialização modular poderoso, mais parecido com um sistema operacional do que um gerenciador de inicialização. Ele pode carregar dezenas de sistemas operacionais diferentes e oferece suporte a plug-ins personalizados (“módulos”) para introduzir mais funcionalidade e suportar procedimentos de inicialização complexos.
+
+O arquivo do carregador de inicialização real para GRUB 2 não é um arquivo chamado GRUB2, mas um arquivo geralmente chamado core.img . Ao contrário do Legacy GRUB, o arquivo de configuração do GRUB 2 é mais um script e menos um arquivo de configuração tradicional. O arquivo grub.cfg, normalmente localizado em /boot/grub/grub.cfg na partição de inicialização, é semelhante a scripts de shell e oferece suporte a conceitos avançados como funções. A funcionalidade principal do GRUB 2 é complementada com módulos, normalmente encontrados em um subdiretório do diretório /boot/grub/ .
 
 
 
