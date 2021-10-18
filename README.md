@@ -396,3 +396,29 @@ hfsplus: cabeçalho de volume secundário inválido
 
 ## HFS vs HFS+
 
+Ao montar uma partição do Mac OS 9 que pensei ser HFS:
+```bash
+mount -t hfs -o ro,loop,offset=790528 os9.img /mnt
+```
+produziu um resultado inesperado:
+
+```bash
+ls /mnt
+#Desktop DB  Desktop DF  Finder  System  Where_have_all_my_files_gone?
+```
+O Where_have_all_my_files_gone? arquivo de texto é realmente muito útil.
+```
+Why can't you see your files? This hard disk is formatted with the Mac OS Extended format. Your files and information are still on the hard disk, but you cannot access them with the version of system software you are using ...
+```
+
+Para resolver o problema, monte a imagem como HFS+
+
+```bash
+mount -t hfsplus -o ro,loop,offset=790528 os9.img /mnt
+
+ls /mnt
+#Applications (Mac OS 9)  Documents                Trash
+#Desktop DB               Late Breaking News       VM Storage
+#Desktop DF               System Folder
+#Desktop Folder           TheVolumeSettingsFolder
+```
