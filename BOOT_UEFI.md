@@ -1,14 +1,22 @@
-Você provavelmente já leu muitas coisas na Internet sobre UEFI. Aqui está algo importante que você deve entender: 95% provavelmente era lixo. Se você acha que sabe sobre a UEFI e derivou seu conhecimento de qualquer outro lugar que não as especificações da UEFI, [o blog do mjg59](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://mjg59.dreamwidth.org/) ou um de alguns outros locais / pessoas vagamente confiáveis ​​- [Rod Smith](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://www.rodsbooks.com/linux-uefi/) , ou [Peter Jones](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://blog.uncooperative.org/) , ou Chris Murphy, ou a documentação do relativamente poucos sistemas operacionais cujos desenvolvedores realmente sabem o que diabos estão fazendo com UEFI - o que você acha que sabe é provavelmente uma mistura tóxica de mal-entendidos, equívocos, meias-verdades, propaganda e mentiras descaradas. Portanto, você provavelmente deve esquecer tudo.
+# BOOT em sistemas U.E.F.I.
 
-Ótimo, agora resolvemos isso. O que eu mais quero falar é sobre bootloading, porque esse é o pedaço de firmware que mais importa para a maioria das pessoas, e os sites de notícias estão sempre falando sobre isso e mal-entendidos loucamente.
+O que eu mais quero falar é sobre o Carregamento de Boot (bootloading), porque essa é a parte do firmware que mais importa para a maioria das pessoas, e os sites de notícias estão sempre falando sobre isso.
 
 ### Terminologia
 
-Primeiro, vamos tirar um pouco da terminologia do caminho. Tanto [BIOS](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/BIOS) quanto [UEFI](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface) são tipos de [firmware](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://en.wikipedia.org/wiki/Firmware) para computadores. O firmware do tipo BIOS (principalmente) só é encontrado em [computadores compatíveis](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/IBM_PC_compatible) com [IBM PC](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/IBM_PC_compatible) . O UEFI pretende ser mais genérico e pode ser encontrado em sistemas que não estão na classe 'IBM PC compatível'.
+Primeiro, vamos nos alinhar um pouco da terminologia.  Tanto BIOS quanto UEFI são tipos
+de [firmware](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://en.wikipedia.org/wiki/Firmware) para computadores. 
+| FIRMWARE |                                                              Apresentação na WikiPedia                                                             |
+|:--------:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|
+|   BIOS   |           [Verbete sobre BIOS na wikipédia](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/BIOS)           |
+|   UEFI   | [Verbete sobre UEFI](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface) |
 
-Você não tem um 'UEFI BIOS'. Ninguém tem um 'UEFI BIOS'. Nunca diga 'UEFI BIOS'. BIOS não é um termo genérico para todo firmware de PC, é um tipo particular de firmware de PC. Seu computador possui um firmware. Se for um computador compatível com IBM PC, é quase certo que seja um BIOS ou um firmware UEFI. Se você estiver executando o [Coreboot](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://www.coreboot.org) , parabéns, Sr./Sra. Exceção. Você pode estar orgulhoso de si mesmo.
+O firmware do tipo BIOS (principalmente) só é encontrado em [computadores compatíveis](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/IBM_PC_compatible) com [IBM PC](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/IBM_PC_compatible) . O UEFI pretende ser mais genérico e pode ser encontrado em sistemas que não estão na classe 'IBM PC compatível'.
 
-[A inicialização segura](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface%23Secure_boot) não é a mesma coisa que UEFI. Nunca use esses termos alternadamente. A inicialização segura é um elemento efetivamente opcional único da especificação UEFI, que foi adicionado na versão 2.2 da especificação UEFI. Falaremos precisamente sobre o que é mais tarde, mas por enquanto, lembre-se de que não é a mesma coisa sobre UEFI. Você precisa entender o que é inicialização segura, o que é UEFI e de qual dos dois você está realmente falando em um determinado momento. Falaremos primeiro sobre UEFI e, em seguida, falaremos sobre Inicialização segura como uma 'extensão' para UEFI, porque basicamente é isso que é.
+Seria redundante você dizer que sua placa mãe possui 'UEFI BIOS'. O correto é dizer que o firmware de boot é 'UEFI'. Evite dizer 'UEFI BIOS'. BIOS não é um termo genérico para todo firmware de PC, é um tipo particular de firmware de PC. A placa mãe de seu computador possui um firmware. Se for um computador **compatível com IBM PC**, é quase certo que seja um firmware **BIOS ou um firmware UEFI**. Se você estiver executando o [Coreboot](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://www.coreboot.org) , parabéns, Sr./Sra. Exceção. Você pode estar orgulhoso de si mesmo.
+
+#### SecureBoot ou Inicialização Segura: opcional. 
+[A inicialização segura](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface%23Secure_boot) ou *secureboot* é a mesma coisa que UEFI ? **NÃO**. Evite usar esses termos alternadamente. A inicialização segura é um **elemento efetivamente opcional** único da especificação UEFI, que foi adicionado na versão 2.2 da especificação UEFI. Falaremos precisamente sobre o que é mais tarde, mas por enquanto, lembre-se de que não é a mesma coisa sobre UEFI. Você precisa entender o que é inicialização segura, o que é UEFI e de qual dos dois você está realmente falando em um determinado momento. Falaremos primeiro sobre UEFI e, em seguida, falaremos sobre Inicialização segura como uma 'extensão' para UEFI, porque basicamente é isso que é.
 
 *Nota histórica de bônus* : a UEFI não foi inventada, não é controlada e nunca foi controlada pela Microsoft. Seu predecessor e base, EFI, foi desenvolvido e publicado pela Intel. A UEFI é gerenciada pelo [UEFI Forum](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://uefi.org/) . A Microsoft é membro do fórum UEFI. Assim como a Red Hat, a Apple e quase todos os principais fabricantes de PC, Intel (obviamente), AMD e uma [lista de outras empresas e organizações de hardware, software e firmware principais e secundárias](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://uefi.org/members) . É uma especificação de amplo consenso, com toda a confusão que isso acarreta, algumas das quais falaremos especificamente mais tarde. Não é o veículo do mal de nenhuma empresa.
 
@@ -26,11 +34,23 @@ Na verdade, funciona de uma maneira muito simples. Em seu velho skool BIOS PC pa
 
 Tudo o que o firmware do BIOS sabe, no contexto da inicialização do sistema, é o que os discos que o sistema contém. Você, o proprietário deste computador baseado em BIOS, pode dizer ao firmware do BIOS de qual disco você deseja inicializar o sistema. O firmware não tem conhecimento de nada além disso. Ele executa o bootloader que encontra no MBR do disco especificado e é isso. O firmware não está mais envolvido na inicialização.
 
-No mundo da BIOS, absolutamente todas as formas de inicialização múltipla são tratadas acima da camada de firmware. A camada de firmware não sabe realmente o que é um bootloader ou o que é um sistema operacional. Inferno, ele não sabe o que é uma partição. Tudo o que ele pode fazer é executar o carregador de boot a partir do MBR de um disco. Você também não pode configurar o processo de inicialização de fora do firmware.
+No mundo da BIOS, absolutamente: 
+* **todas as formas de inicialização múltipla são tratadas acima da camada de firmware**.
 
-### Inicialização UEFI: plano de fundo
+A camada de firmware BIOS:
 
-OK, então temos nosso background, o mundo BIOS. Agora vamos ver como a inicialização funciona em um sistema UEFI. Mesmo que você não entenda os detalhes desta postagem, entenda isso: *é completamente diferente* . Completamente e totalmente diferente de como funciona a inicialização do BIOS. Você não pode aplicar nenhum de seus conhecimentos de inicialização do BIOS à inicialização UEFI nativa. Você não pode fazer um pequeno ajuste em um sistema projetado para o mundo da inicialização do BIOS e aplicá-lo à inicialização UEFI *nativa* . Você precisa entender que é um mundo completamente diferente.
+* **não sabe** realmente o que é um **bootloader**.
+* **não sabe** o que é um **sistema operacional**.
+* **não sabe** o que é uma **partição**.
+
+Tudo o que ele pode fazer é:
+| **executar o carregador de boot a partir do MBR de um disco**. |
+|----------------------------------------------------------------|
+Você também **não pode configurar o processo de inicialização de fora do firmware**.
+
+### Inicialização UEFI: cenário
+
+OK, então temos nossa referência histórica do mundo BIOS. Agora vamos ver como a inicialização funciona em um sistema UEFI. Mesmo que você não entenda os detalhes desta postagem, entenda isso: *é completamente diferente* . Completamente e totalmente diferente de como funciona a inicialização do BIOS. Você não pode aplicar nenhum de seus conhecimentos de inicialização do BIOS à inicialização UEFI nativa. Você não pode fazer um pequeno ajuste em um sistema projetado para o mundo da inicialização do BIOS e aplicá-lo à inicialização UEFI *nativa* . Você precisa entender que é um mundo completamente diferente.
 
 Aqui está outra coisa importante para entender: muitos firmwares UEFI implementam algum tipo de *modo de compatibilidade* de *BIOS* , às vezes referido como *CSM* . Muitos firmwares UEFI podem inicializar um sistema exatamente como um firmware de BIOS faria - eles podem procurar um MBR em um disco e executar o carregador de boot desse MBR e deixar tudo subsequentemente para esse carregador de boot. As pessoas às vezes se referem *incorretamente* ao uso desse recurso como 'desabilitar UEFI', o que é *linguisticamente* absurdo. Você não pode 'desabilitar' o firmware do seu sistema. É apenas um termo estúpido. Não use, mas entenda o que as pessoas realmente querem dizer quando falam. Eles estão falando sobre o uso da capacidade de um firmware UEFI para inicializar o sistema 'estilo BIOS'em vez do estilo UEFI nativo.
 
