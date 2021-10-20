@@ -20,6 +20,17 @@ Seria redundante você dizer que sua placa mãe possui 'UEFI BIOS'. O correto é
 
 *Nota histórica de bônus* : a UEFI não foi inventada, não é controlada e nunca foi controlada pela Microsoft. Seu predecessor e base, EFI, foi desenvolvido e publicado pela Intel. A UEFI é gerenciada pelo [UEFI Forum](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://uefi.org/) . A Microsoft é membro do fórum UEFI. Assim como a Red Hat, a Apple e quase todos os principais fabricantes de PC, Intel (obviamente), AMD e uma [lista de outras empresas e organizações de hardware, software e firmware principais e secundárias](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=http://uefi.org/members) . É uma especificação de amplo consenso, com toda a confusão que isso acarreta, algumas das quais falaremos especificamente mais tarde. Não é o veículo do mal de nenhuma empresa.
 ### Endereçamento Lógico em discos rígidos - LBA
+O endereçamento lógico passou por várias evoluções acompanhando a capacidade de armazenamento das várias evoluções do IBM-PC.
+
+|      Padrão     | Tamanho do LBA | Contador de Cilindro | Contador de Cabeça | Contador de Setor | Tamanho Setor em Bytes | Capacidade do disco                    |
+|:---------------:|:--------------:|:--------------------:|:------------------:|:-----------------:|------------------------|----------------------------------------|
+| INT 13 Original |     24 bits    |        10 bits       |       8 bits       |       6 bits      |        disquete        |                                        |
+|  INT 13 compat  |     24 bits    |        10 bits       |       4 bits       |       6 bits      |        512 bytes       | 2^10^x2^4^x2^6^x512 = 528,482304 MB    |
+|    Bit Shift    |     28 bits    |  16 bits map 10 bits |  4 bits map 8 bits | 8 bits map 6 bits |        512 bytes       | 2^10^x2^8^x2^6^x512 = 8,589934592 GB   |
+|  ATA-1 a ATA-5  |     28 bits    |        16 bits       |       4 bits       |       8 bits      |        512 bytes       | 2^16^x2^4^x2^8^x512 = 137,438953472 GB |
+|      ATA-6      |     48 bits    |          N/A         |         N/A        |        N/A        |        512 bytes       | 2^48^x512 = 144,12 PB                  |
+| EDD BIOS        |     64 bits    |          N/A         |         N/A        |        N/A        |        512 bytes       | 2^64^x512 = 9,44 ZB                    |
+
 ![](fotos/uefi-00-enderecamento-gpt.jpg)
 ### Referências
 
