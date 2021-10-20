@@ -24,6 +24,18 @@ Depois de configurar os dispositivos básicos de entrada e saída do seu PC, o B
 Anteriormente, mencionamos que uma parte importante do trabalho do BIOS é detectar e mapear os discos rígidos conectados. Esta lista agora é útil, pois a BIOS carregará um programa muito pequeno do primeiro disco rígido para a memória e dirá à CPU para executar seu conteúdo, transferindo o controle do computador para o que quer que esteja no disco rígido e encerrando sua atividade papel no carregamento de seu PC. Este disco rígido é conhecido como “dispositivo de inicialização”, “disco de inicialização” ou “unidade 0” e geralmente pode ser selecionado ou definido na configuração do BIOS.
 
 ### O dispositivo de inicialização
+
+|                    Endereço                   |     |                                         Descrição                                        |                       | Tamanho em bytes |
+|:---------------------------------------------:|:---:|:----------------------------------------------------------------------------------------:|:---------------------:|:----------------:|
+|                      Hex                      | Dec |                                                                                          |                       |                  |
+|                      0000                     |  0  | Código de arranque do SO                                                                 |                       |  440 (max. 446)  |
+|                      01B8                     | 440 | Assinatura opcional                                                                      |                       |         4        |
+|                      01BC                     | 444 | normalmente nulo ; 0x0000                                                                |                       |         2        |
+|                      01BE                     | 446 | Tabela de partições primarias (Quatro entradas de 16 bytes (IBM Partition Table scheme)) |                       |        64        |
+|                      01FE                     | 510 |                                            55h                                           | MBR signature; 0x55AA |         2        |
+|                      01FF                     | 511 |                                            AAh                                           |                       |                  |
+| Tamanho total do MBR : 440 + 4 + 2 + 64 + 2 = |     |                                                                                          |                       |        512       |
+
 Independentemente de o BIOS ter sido configurado para inicializar a partir de um disco rígido local ou de um stick USB removível, a sequência de transferência é a mesma. Uma vez que os procedimentos do BIOS POST e AddOn ROM foram concluídos, o BIOS carrega os **primeiros 512 bytes do disco rígido** do **dispositivo de inicialização selecionado** - esses **512 bytes** são comumente conhecidos como **MBR** ou **Master Boot Record**.
 
 ### O Master Boot Record (MBR - 512 bytes)
