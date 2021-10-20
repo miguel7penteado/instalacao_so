@@ -54,6 +54,8 @@ Você também  **não pode configurar o processo de inicialização de fora do f
 
 ### Inicialização UEFI: cenário
 
+![](fotos/uefi-0-particoes_uefi_linux.jpg)
+
 OK, então temos nossa referência histórica do mundo BIOS. Agora vamos ver como a inicialização funciona em um sistema UEFI. Mesmo que você não entenda os detalhes desta postagem, saiba que **UEFI é uma abordagem completamente diferente**. Completamente e totalmente diferente de como funciona a inicialização do BIOS. Você não pode aplicar nenhum de seus conhecimentos de inicialização do BIOS à inicialização UEFI nativa. Você não pode fazer um pequeno ajuste em um sistema projetado para o mundo da inicialização do BIOS e aplicá-lo à inicialização UEFI *nativa* . Você precisa entender que é um mundo completamente diferente.
 
 #### CSM - o modo de compatibilidade com o "mundo antigo"
