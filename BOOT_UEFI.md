@@ -95,7 +95,7 @@ Então você pode imaginar os elfos UEFI sentados e considerando este problema, 
 A especificação UEFI define um formato executável e requer que todos os firmwares UEFI sejam capazes de executar código neste formato. Ao escrever um carregador de inicialização para UEFI nativa, você escreve neste formato. Isso é muito simples e direto e não precisa de nenhuma explicação adicional: é apenas uma boa coisa que agora temos uma especificação de firmware que define um formato comum para o código que o firmware pode executar.
 
 ### O formato GPT (tabela de partição GUID)
-
+![](fotos/diferenca-entre-mbr-e-gpt-1.jpg)
 O formato da [tabela de partição GUID](https://translate.google.com/website?sl=en&tl=pt&nui=1&u=https://en.wikipedia.org/wiki/GUID_Partition_Table) está muito vinculado à especificação UEFI e, novamente, isso não é algo particularmente complexo ou que precise de muitas explicações, é apenas um bom trabalho de base que a especificação fornece. GPT é apenas um padrão para fazer tabelas de partição - as informações no início de um disco que definem quais partições esse disco contém. É um padrão melhor para fazer isso do que as tabelas de partição MBR / 'MS-DOS' em muitos aspectos, e a especificação UEFI requer que firmwares compatíveis com UEFI sejam capazes de interpretar GPT (também requer que sejam capazes de interpretar MBR, para compatibilidade com versões anteriores). Tudo isso é uma base útil: o que está acontecendo aqui é que a especificação está estabelecendo certos recursos que tudo acima da camada de firmware pode contar com o firmware para ter.
 
 ### Partições do sistema EFI
