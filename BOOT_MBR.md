@@ -99,6 +99,220 @@ O resultado é este:
 000001e0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
 000001f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 55 aa  |..............U.|
 ```
+Você pode usar o GCC objdump para converter o hexa em assembler e conferir as operações
+
+```bash
+objdump -D -b binary -mi386 -Maddr16,data16
+```
+
+```asm
+#Desmontagem da secção .data:
+#00000000 <.data>:
+   0:	eb 63                	jmp    0x65
+   2:	90                   	nop
+   3:	10 8e d0 bc          	adc    %cl,-0x4330(%bp)
+   7:	00 b0 b8 00          	add    %dh,0xb8(%bx,%si)
+   b:	00 8e d8 8e          	add    %cl,-0x7128(%bp)
+   f:	c0 fb be             	sar    $0xbe,%bl
+  12:	00 7c bf             	add    %bh,-0x41(%si)
+  15:	00 06 b9 00          	add    %al,0xb9
+  19:	02 f3                	add    %bl,%dh
+  1b:	a4                   	movsb  %ds:(%si),%es:(%di)
+  1c:	ea 21 06 00 00       	ljmp   $0x0,$0x621
+  21:	be be 07             	mov    $0x7be,%si
+  24:	38 04                	cmp    %al,(%si)
+  26:	75 0b                	jne    0x33
+  28:	83 c6 10             	add    $0x10,%si
+  2b:	81 fe fe 07          	cmp    $0x7fe,%si
+  2f:	75 f3                	jne    0x24
+  31:	eb 16                	jmp    0x49
+  33:	b4 02                	mov    $0x2,%ah
+  35:	b0 01                	mov    $0x1,%al
+  37:	bb 00 7c             	mov    $0x7c00,%bx
+  3a:	b2 80                	mov    $0x80,%dl
+  3c:	8a 74 01             	mov    0x1(%si),%dh
+  3f:	8b 4c 02             	mov    0x2(%si),%cx
+  42:	cd 13                	int    $0x13
+  44:	ea 00 7c 00 00       	ljmp   $0x0,$0x7c00
+  49:	eb fe                	jmp    0x49
+	...
+  5b:	80 01 00             	addb   $0x0,(%bx,%di)
+  5e:	00 00                	add    %al,(%bx,%si)
+  60:	00 00                	add    %al,(%bx,%si)
+  62:	00 00                	add    %al,(%bx,%si)
+  64:	ff                   	(bad)  
+  65:	fa                   	cli    
+  66:	90                   	nop
+  67:	90                   	nop
+  68:	f6 c2 80             	test   $0x80,%dl
+  6b:	74 05                	je     0x72
+  6d:	f6 c2 70             	test   $0x70,%dl
+  70:	74 02                	je     0x74
+  72:	b2 80                	mov    $0x80,%dl
+  74:	ea 79 7c 00 00       	ljmp   $0x0,$0x7c79
+  79:	31 c0                	xor    %ax,%ax
+  7b:	8e d8                	mov    %ax,%ds
+  7d:	8e d0                	mov    %ax,%ss
+  7f:	bc 00 20             	mov    $0x2000,%sp
+  82:	fb                   	sti    
+  83:	a0 64 7c             	mov    0x7c64,%al
+  86:	3c ff                	cmp    $0xff,%al
+  88:	74 02                	je     0x8c
+  8a:	88 c2                	mov    %al,%dl
+  8c:	52                   	push   %dx
+  8d:	be 80 7d             	mov    $0x7d80,%si
+  90:	e8 17 01             	call   0x1aa
+  93:	be 05 7c             	mov    $0x7c05,%si
+  96:	b4 41                	mov    $0x41,%ah
+  98:	bb aa 55             	mov    $0x55aa,%bx
+  9b:	cd 13                	int    $0x13
+  9d:	5a                   	pop    %dx
+  9e:	52                   	push   %dx
+  9f:	72 3d                	jb     0xde
+  a1:	81 fb 55 aa          	cmp    $0xaa55,%bx
+  a5:	75 37                	jne    0xde
+  a7:	83 e1 01             	and    $0x1,%cx
+  aa:	74 32                	je     0xde
+  ac:	31 c0                	xor    %ax,%ax
+  ae:	89 44 04             	mov    %ax,0x4(%si)
+  b1:	40                   	inc    %ax
+  b2:	88 44 ff             	mov    %al,-0x1(%si)
+  b5:	89 44 02             	mov    %ax,0x2(%si)
+  b8:	c7 04 10 00          	movw   $0x10,(%si)
+  bc:	66 8b 1e 5c 7c       	mov    0x7c5c,%ebx
+  c1:	66 89 5c 08          	mov    %ebx,0x8(%si)
+  c5:	66 8b 1e 60 7c       	mov    0x7c60,%ebx
+  ca:	66 89 5c 0c          	mov    %ebx,0xc(%si)
+  ce:	c7 44 06 00 70       	movw   $0x7000,0x6(%si)
+  d3:	b4 42                	mov    $0x42,%ah
+  d5:	cd 13                	int    $0x13
+  d7:	72 05                	jb     0xde
+  d9:	bb 00 70             	mov    $0x7000,%bx
+  dc:	eb 76                	jmp    0x154
+  de:	b4 08                	mov    $0x8,%ah
+  e0:	cd 13                	int    $0x13
+  e2:	73 0d                	jae    0xf1
+  e4:	5a                   	pop    %dx
+  e5:	84 d2                	test   %dl,%dl
+  e7:	0f 83 d8 00          	jae    0x1c3
+  eb:	be 8b 7d             	mov    $0x7d8b,%si
+  ee:	e9 82 00             	jmp    0x173
+  f1:	66 0f b6 c6          	movzbl %dh,%eax
+  f5:	88 64 ff             	mov    %ah,-0x1(%si)
+  f8:	40                   	inc    %ax
+  f9:	66 89 44 04          	mov    %eax,0x4(%si)
+  fd:	0f b6 d1             	movzbw %cl,%dx
+ 100:	c1 e2 02             	shl    $0x2,%dx
+ 103:	88 e8                	mov    %ch,%al
+ 105:	88 f4                	mov    %dh,%ah
+ 107:	40                   	inc    %ax
+ 108:	89 44 08             	mov    %ax,0x8(%si)
+ 10b:	0f b6 c2             	movzbw %dl,%ax
+ 10e:	c0 e8 02             	shr    $0x2,%al
+ 111:	66 89 04             	mov    %eax,(%si)
+ 114:	66 a1 60 7c          	mov    0x7c60,%eax
+ 118:	66 09 c0             	or     %eax,%eax
+ 11b:	75 4e                	jne    0x16b
+ 11d:	66 a1 5c 7c          	mov    0x7c5c,%eax
+ 121:	66 31 d2             	xor    %edx,%edx
+ 124:	66 f7 34             	divl   (%si)
+ 127:	88 d1                	mov    %dl,%cl
+ 129:	31 d2                	xor    %dx,%dx
+ 12b:	66 f7 74 04          	divl   0x4(%si)
+ 12f:	3b 44 08             	cmp    0x8(%si),%ax
+ 132:	7d 37                	jge    0x16b
+ 134:	fe c1                	inc    %cl
+ 136:	88 c5                	mov    %al,%ch
+ 138:	30 c0                	xor    %al,%al
+ 13a:	c1 e8 02             	shr    $0x2,%ax
+ 13d:	08 c1                	or     %al,%cl
+ 13f:	88 d0                	mov    %dl,%al
+ 141:	5a                   	pop    %dx
+ 142:	88 c6                	mov    %al,%dh
+ 144:	bb 00 70             	mov    $0x7000,%bx
+ 147:	8e c3                	mov    %bx,%es
+ 149:	31 db                	xor    %bx,%bx
+ 14b:	b8 01 02             	mov    $0x201,%ax
+ 14e:	cd 13                	int    $0x13
+ 150:	72 1e                	jb     0x170
+ 152:	8c c3                	mov    %es,%bx
+ 154:	60                   	pusha  
+ 155:	1e                   	push   %ds
+ 156:	b9 00 01             	mov    $0x100,%cx
+ 159:	8e db                	mov    %bx,%ds
+ 15b:	31 f6                	xor    %si,%si
+ 15d:	bf 00 80             	mov    $0x8000,%di
+ 160:	8e c6                	mov    %si,%es
+ 162:	fc                   	cld    
+ 163:	f3 a5                	rep movsw %ds:(%si),%es:(%di)
+ 165:	1f                   	pop    %ds
+ 166:	61                   	popa   
+ 167:	ff 26 5a 7c          	jmp    *0x7c5a
+ 16b:	be 86 7d             	mov    $0x7d86,%si
+ 16e:	eb 03                	jmp    0x173
+ 170:	be 95 7d             	mov    $0x7d95,%si
+ 173:	e8 34 00             	call   0x1aa
+ 176:	be 9a 7d             	mov    $0x7d9a,%si
+ 179:	e8 2e 00             	call   0x1aa
+ 17c:	cd 18                	int    $0x18
+ 17e:	eb fe                	jmp    0x17e
+ 180:	47                   	inc    %di
+ 181:	52                   	push   %dx
+ 182:	55                   	push   %bp
+ 183:	42                   	inc    %dx
+ 184:	20 00                	and    %al,(%bx,%si)
+ 186:	47                   	inc    %di
+ 187:	65 6f                	outsw  %gs:(%si),(%dx)
+ 189:	6d                   	insw   (%dx),%es:(%di)
+ 18a:	00 48 61             	add    %cl,0x61(%bx,%si)
+ 18d:	72 64                	jb     0x1f3
+ 18f:	20 44 69             	and    %al,0x69(%si)
+ 192:	73 6b                	jae    0x1ff
+ 194:	00 52 65             	add    %dl,0x65(%bp,%si)
+ 197:	61                   	popa   
+ 198:	64 00 20             	add    %ah,%fs:(%bx,%si)
+ 19b:	45                   	inc    %bp
+ 19c:	72 72                	jb     0x210
+ 19e:	6f                   	outsw  %ds:(%si),(%dx)
+ 19f:	72 0d                	jb     0x1ae
+ 1a1:	0a 00                	or     (%bx,%si),%al
+ 1a3:	bb 01 00             	mov    $0x1,%bx
+ 1a6:	b4 0e                	mov    $0xe,%ah
+ 1a8:	cd 10                	int    $0x10
+ 1aa:	ac                   	lods   %ds:(%si),%al
+ 1ab:	3c 00                	cmp    $0x0,%al
+ 1ad:	75 f4                	jne    0x1a3
+ 1af:	c3                   	ret    
+	...
+ 1b8:	15 7e e8             	adc    $0xe87e,%ax
+ 1bb:	48                   	dec    %ax
+ 1bc:	00 00                	add    %al,(%bx,%si)
+ 1be:	80 20 21             	andb   $0x21,(%bx,%si)
+ 1c1:	00 83 fe ff          	add    %al,-0x2(%bp,%di)
+ 1c5:	ff 00                	incw   (%bx,%si)
+ 1c7:	08 00                	or     %al,(%bx,%si)
+ 1c9:	00 00                	add    %al,(%bx,%si)
+ 1cb:	f8                   	clc    
+ 1cc:	4d                   	dec    %bp
+ 1cd:	39 00                	cmp    %ax,(%bx,%si)
+ 1cf:	fe                   	(bad)  
+ 1d0:	ff                   	(bad)  
+ 1d1:	ff 05                	incw   (%di)
+ 1d3:	fe                   	(bad)  
+ 1d4:	ff                   	(bad)  
+ 1d5:	ff                   	(bad)  
+ 1d6:	fe 07                	incb   (%bx)
+ 1d8:	4e                   	dec    %si
+ 1d9:	39 02                	cmp    %ax,(%bp,%si)
+ 1db:	50                   	push   %ax
+ 1dc:	ea 00 00 00 00       	ljmp   $0x0,$0x0
+	...
+ 1fd:	00 55 aa             	add    %dl,-0x56(%di)
+
+```
+
+> Você pode converter esses hexa-decimais para assembler online no site ![https://defuse.ca/online-x86-assembler.htm#disassembly2](https://defuse.ca/online-x86-assembler.htm#disassembly2)
+
 
 ### A Tabela de Partição
 Em primeiro lugar, o MBR contém algo chamado tabela de partição, que é um índice de até quatro partições que existem no mesmo disco, um índice, se preferir. Sem ele (como em disquetes), o disco inteiro poderia conter apenas uma partição, o que significa que você não pode ter coisas como sistemas de arquivos diferentes na mesma unidade, o que por sua vez significaria que você nunca poderia instalar Linux e Windows no mesmo disco, por exemplo.
