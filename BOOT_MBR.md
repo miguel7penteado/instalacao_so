@@ -42,6 +42,23 @@ Independentemente de o BIOS ter sido configurado para inicializar a partir de um
 ![](fotos/2-Master-Boot-Record.png)
 O **M.B.R.** é o primeiro e mais importante componente do lado do software no procedimento de inicialização em máquinas baseadas em BIOS. Cada disco rígido possui um MBR e contém várias informações importantes.
 ![](fotos/mbr.jpg)
+#### Visualizando o MBR do seu PC utilizando linux
+Para poder ver uma foto equivalente a foto acima em seu editor de texto, considerando que seu PC use o padrão BIOS/MBR, faça o seguinte:
+```bash
+
+mkdir -p /tmp/1
+
+# Usando a ferramenta dd
+sudo dd if=/dev/sda of=/tmp/1/mbr_backup bs=512 count=1
+
+# Usando a ferramenta dc3dd
+sudo dc3dd if=/dev/sda of=/tmp/1/mbr_backup  cnt=1 ssz=512 hash=sha256 mlog=hashes
+
+# Transformando o arquivo binário mbr_backup (de 512 bytes) em arquivo texto para poder abrir em um editor comum
+
+hexdump -C mbr_backup > mbr_backup.txt
+
+```
 
 ### A Tabela de Partição
 Em primeiro lugar, o MBR contém algo chamado tabela de partição, que é um índice de até quatro partições que existem no mesmo disco, um índice, se preferir. Sem ele (como em disquetes), o disco inteiro poderia conter apenas uma partição, o que significa que você não pode ter coisas como sistemas de arquivos diferentes na mesma unidade, o que por sua vez significaria que você nunca poderia instalar Linux e Windows no mesmo disco, por exemplo.
