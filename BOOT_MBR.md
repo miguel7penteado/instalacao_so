@@ -39,8 +39,9 @@ Anteriormente, mencionamos que uma parte importante do trabalho do BIOS é detec
 Independentemente de o BIOS ter sido configurado para inicializar a partir de um disco rígido local ou de um stick USB removível, a sequência de transferência é a mesma. Uma vez que os procedimentos do BIOS POST e AddOn ROM foram concluídos, o BIOS carrega os **primeiros 512 bytes do disco rígido** do **dispositivo de inicialização selecionado** - esses **512 bytes** são comumente conhecidos como **MBR** ou **Master Boot Record**.
 
 ### O Master Boot Record (MBR - 512 bytes)
+![](fotos/2-Master-Boot-Record.png)
 O **M.B.R.** é o primeiro e mais importante componente do lado do software no procedimento de inicialização em máquinas baseadas em BIOS. Cada disco rígido possui um MBR e contém várias informações importantes.
-![](2-Master-Boot-Record.png)
+![](fotos/mbr.jpg)
 
 ### A Tabela de Partição
 Em primeiro lugar, o MBR contém algo chamado tabela de partição, que é um índice de até quatro partições que existem no mesmo disco, um índice, se preferir. Sem ele (como em disquetes), o disco inteiro poderia conter apenas uma partição, o que significa que você não pode ter coisas como sistemas de arquivos diferentes na mesma unidade, o que por sua vez significaria que você nunca poderia instalar Linux e Windows no mesmo disco, por exemplo.
