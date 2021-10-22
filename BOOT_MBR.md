@@ -45,6 +45,11 @@ O **M.B.R.** é o primeiro e mais importante componente do lado do software no p
 #### Visualizando o MBR do seu PC utilizando linux
 Para poder ver uma foto equivalente a foto acima em seu editor de texto, considerando que seu PC use o padrão BIOS/MBR, faça o seguinte:
 ```bash
+# descubra o tamanho do setor utilizado no disco
+blockdev --getpbsz /dev/sda
+512
+
+# Neste disco o endereço LBA0 do disco correponde aos primeiros 512 bytes do disco
 
 mkdir -p /tmp/1
 
