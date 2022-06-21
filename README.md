@@ -1,4 +1,6 @@
 
+[wimbrts](https://github.com/wimbrts)
+
 # Montando sem um OFFSET específico
 ## losetup --partscan
 
